@@ -44,7 +44,6 @@ function triggerAnimation(options, currentInstance) {
         if (!isReady()) return
         
         const id = unref(options.name) + '-' + scrollingObserver.animationCounter++
-
         animationRef = {
             id,
             animation: gsap.timeline({
@@ -84,11 +83,11 @@ function triggerAnimation(options, currentInstance) {
             animationRef.animation.to(unref(options.trigger), { '--progress': 1, ease: unref(options.ease) }, 0)
             if (Array.isArray(timeline)) {
                 for(let { target, vars } of timeline) {
-                    animationRef.animation.to(target, vars, 0)
+                    animationRef.animation.to(unref(target), vars, 0)
                 }
             } else {
                 let { target, vars } = timeline
-                animationRef.animation.to(target, vars, 0)
+                animationRef.animation.to(unref(target), vars, 0)
             }
         }
 

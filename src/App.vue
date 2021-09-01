@@ -2,7 +2,7 @@
   <div class="content">
     <div class="toolbar">
       <button @click="text = text + text">Add text</button>    
-      <button @click="enabled = !enabled">Enable</button>
+      <button @click="enabled = !enabled">Toggle enabled</button>
     </div>
 
     <scroll-trigger name="test" start="top bottom-=30%" end="bottom top+=30%" :scrub="true" :markers="true">
