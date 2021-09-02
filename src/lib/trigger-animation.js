@@ -20,30 +20,22 @@ function triggerAnimation(options, currentInstance) {
         }
     }
 
-    function isReady() {
-        if (disposed) return false
+    function registerAnimation() {
+        if (disposed || unref(options.enabled) === false) return
 
-        for(let key in options) {
-            const option = unref(options[key])
-            if (option === null) return false
-            
-            if (typeof option == 'object' && !(option instanceof Element)) {
-                if (Array.isArray(option)) {
-                    for(let item of option) {
-                        if (!isReady(item)) return false
-                    }
-                } else {
-                    if (!isReady(option)) return false
-                }
+        const id = unref(options.name) + '-' + scrollingObserver.animationCounter++
+        let toggleClass = unref(options.toggleClass)
+        if (toggleClass && toggleClass.targets) {
+            let className = unref(toggleClass.className)
+            let targets = unref(toggleClass.targets)
+            if (Array.isArray(targets)) {
+                targets = targets.map(unref)
+            }
+            toggleClass = {
+                className,
+                targets
             }
         }
-        return true
-    }
-
-    function registerAnimation() {
-        if (!isReady()) return
-        
-        const id = unref(options.name) + '-' + scrollingObserver.animationCounter++
         animationRef = {
             id,
             animation: gsap.timeline({
@@ -52,24 +44,24 @@ function triggerAnimation(options, currentInstance) {
                     anticipatePin: unref(options.anticipatePin),
                     end: unref(options.end),
                     endTrigger: unref(options.endTrigger),
-                    horizontal: unref(options.horizontal),
+                    horizontal: unref(options.horizontal) || false,
                     markers: unref(options.markers),
                     pin: unref(options.pin),
                     pinnedContainer: unref(options.pinnedContainer),
                     pinReparent: unref(options.pinReparent),
                     pinSpacing: unref(options.pinSpacing),
-                    pinType: unref(options.pinType),
+                    pinType: unref(options.pinType) || 'fixed',
                     refreshPriority: unref(options.refreshPriority),
                     scroller: unref(options.scroller),
                     scrub: unref(options.scrub),
                     snap: unref(options.snap),
                     start: unref(options.start),
-                    toggleActions: unref(options.toggleActions),
+                    toggleActions: unref(options.toggleActions) || 'play none none none',
                     trigger: unref(options.trigger),
-                    toggleClass: unref(options.toggleClass),
+                    toggleClass,
                     onEnter: unref(options.onEnter), 
                     onEnterBack: unref(options.onEnterBack), 
-                    onLeave: unref(options.onEnterBack), 
+                    onLeave: unref(options.onLeave), 
                     onLeaveBack: unref(options.onLeaveBack), 
                     onUpdate: unref(options.onUpdate), 
                     onScrubComplete: unref(options.onScrubComplete), 
@@ -78,9 +70,13 @@ function triggerAnimation(options, currentInstance) {
                 }
             })
         }
+
+        if (unref(options.scrub)) {
+            unref(options.trigger).style.setProperty('--progress', 0)
+            animationRef.animation.to(unref(options.trigger), { '--progress': 1, ease: unref(options.ease) }, 0)
+        }
         const timeline = unref(options.timeline)
         if (timeline) {
-            animationRef.animation.to(unref(options.trigger), { '--progress': 1, ease: unref(options.ease) }, 0)
             if (Array.isArray(timeline)) {
                 for(let { target, vars } of timeline) {
                     animationRef.animation.to(unref(target), vars, 0)
@@ -114,9 +110,7 @@ function triggerAnimation(options, currentInstance) {
     async function initAnimation() {
         await nextTick()
         destroyAnimation()
-        if (unref(options.enabled)) {
-            await registerAnimation()
-        }
+        await registerAnimation()
     }
 
     if(typeof window !== 'undefined') {
@@ -126,8 +120,8 @@ function triggerAnimation(options, currentInstance) {
         }, currentInstance)
 
         if(!currentInstance) {
-            onMounted(() => {
-                initAnimation()
+            onMounted(async () => {
+                await initAnimation()
                 for(let option in options) {
                     if (isRef(options[option])) {
                         watch(options[option], () => {

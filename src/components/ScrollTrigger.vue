@@ -56,7 +56,6 @@ export default {
         },
         pinType: {
 			type: String,
-			default: 'fixed'
         },
         scroller: {
             type: Object,
@@ -74,7 +73,6 @@ export default {
         },
         toggleActions: {
             type: String,
-            default: 'play none none none'
         },
         toggleClass: {
             type: [String, Object],
@@ -89,7 +87,6 @@ export default {
         },
         timeline: {
             type: [Array, Object],
-            default: []
         }
 	},
     setup(props, { emit }) {
