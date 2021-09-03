@@ -23,7 +23,7 @@ function triggerAnimation(options, currentInstance) {
     function registerAnimation() {
         if (disposed || unref(options.enabled) === false) return
 
-        const id = unref(options.name) + '-' + scrollingObserver.animationCounter++
+        const id = (unref(options.name) || 'Animation') + '-' + scrollingObserver.animationCounter++
         let toggleClass = unref(options.toggleClass)
         if (toggleClass && toggleClass.targets) {
             let className = unref(toggleClass.className)
@@ -36,6 +36,7 @@ function triggerAnimation(options, currentInstance) {
                 targets
             }
         }
+
         animationRef = {
             id,
             animation: gsap.timeline({
@@ -70,23 +71,22 @@ function triggerAnimation(options, currentInstance) {
                 }
             })
         }
-
+        const timeline = unref(options.timeline)
+        if (timeline) {
+            if (Array.isArray(timeline)) {
+                for(let { target, vars, position } of timeline) {
+                    animationRef.animation.to(unref(target) || unref(options.trigger), vars, position)
+                }
+            } else {
+                let { target, vars, position } = timeline
+                animationRef.animation.to(unref(target) || unref(options.trigger), vars, position)
+            }
+        }
         if (unref(options.scrub)) {
             unref(options.trigger).style.setProperty('--progress', 0)
             animationRef.animation.to(unref(options.trigger), { '--progress': 1, ease: unref(options.ease) }, 0)
         }
-        const timeline = unref(options.timeline)
-        if (timeline) {
-            if (Array.isArray(timeline)) {
-                for(let { target, vars } of timeline) {
-                    animationRef.animation.to(unref(target), vars, 0)
-                }
-            } else {
-                let { target, vars } = timeline
-                animationRef.animation.to(unref(target), vars, 0)
-            }
-        }
-
+        
         if (animationRef.animation.scrollTrigger.scroller != window) {
             animationRef.scrollingElement = animationRef.animation.scrollTrigger.scroller
         } else {
@@ -94,6 +94,8 @@ function triggerAnimation(options, currentInstance) {
         }
         
         scrollingObserver.observe(animationRef)
+
+        if (unref(options.onAnimation)) unref(options.onAnimation)(animationRef)
     }
 
     function destroyAnimation() {
