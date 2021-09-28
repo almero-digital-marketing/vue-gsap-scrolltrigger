@@ -1,6 +1,6 @@
 import { onBeforeUnmount, onMounted, nextTick, watch, unref, isRef } from 'vue'
 import ScrollingObserver from './scrolling-observer'
-import { gsap } from 'gsap'
+import { gsap, SteppedEase } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
@@ -37,6 +37,7 @@ function triggerAnimation(options, currentInstance) {
             }
         }
 
+        let lastStep = 0
         animationRef = {
             id,
             animation: gsap.timeline({
@@ -54,7 +55,7 @@ function triggerAnimation(options, currentInstance) {
                     pinType: unref(options.pinType) || 'fixed',
                     refreshPriority: unref(options.refreshPriority),
                     scroller: unref(options.scroller),
-                    scrub: unref(options.scrub),
+                    scrub: unref(options.scrub) || unref(options.steps > 0),
                     snap: unref(options.snap),
                     start: unref(options.start),
                     toggleActions: unref(options.toggleActions) || 'play none none none',
@@ -84,7 +85,27 @@ function triggerAnimation(options, currentInstance) {
         }
         if (unref(options.scrub)) {
             unref(options.trigger).style.setProperty('--progress', 0)
-            animationRef.animation.to(unref(options.trigger), { '--progress': 1, ease: unref(options.ease) }, 0)
+            animationRef.animation.to(unref(options.trigger), { 
+                '--progress': 1, 
+                ease: unref(options.ease) 
+            }, 0)
+        }
+        if (unref(options.steps)) {
+            let lastStep = 0
+            unref(options.trigger).style.setProperty('--step', 0)
+            animationRef.animation.to(unref(options.trigger), { 
+                '--step': unref(options.steps) - 1, 
+                ease: SteppedEase.config(unref(options.steps) - 1), 
+                onUpdate: () => {
+                    if (unref(options.onStep)) {
+                        const step = unref(options.trigger).style.getPropertyValue('--step')
+                        if (step != lastStep) {
+                            unref(options.onStep)(step)
+                            lastStep = step
+                        }
+                    }
+                }, 
+            }, 0)
         }
         
         if (animationRef.animation.scrollTrigger.scroller != window) {
@@ -101,17 +122,18 @@ function triggerAnimation(options, currentInstance) {
     function destroyAnimation() {
         if (animationRef) {
             scrollingObserver.unobserve(animationRef)
-            animationRef.animation.scrollTrigger.kill(false)
+            animationRef.animation.scrollTrigger.kill()
             animationRef.animation.kill()
-
+            animationRef.animation = null
             removeMarkers()
         }
         animationRef = null
     }
 
     async function initAnimation() {
-        await nextTick()
+        // console.log('Init Animation', options.name)
         destroyAnimation()
+        await nextTick()
         await registerAnimation()
     }
 
@@ -127,7 +149,7 @@ function triggerAnimation(options, currentInstance) {
                 for(let option in options) {
                     if (isRef(options[option])) {
                         watch(options[option], () => {
-                            initAnimation() 
+                            initAnimation()
                         })
                     }
                 }

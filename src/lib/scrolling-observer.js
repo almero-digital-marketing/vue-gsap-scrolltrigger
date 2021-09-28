@@ -26,11 +26,13 @@ class ScrollingObserver {
     }
     unobserve(animationRef) {
         const animationRefs = this.resizeMap.get(animationRef.scrollingElement)
-        const index = animationRefs.indexOf(animationRef)
-        animationRefs.splice(index, 1)
-        if (animationRefs.length == 0) {
-            this.resizeMap.delete(animationRef.scrollingElement)
-            this.resizeObserver.unobserve(animationRef.scrollingElement)
+        if (animationRefs) {
+            const index = animationRefs.indexOf(animationRef)
+            animationRefs.splice(index, 1)
+            if (animationRefs.length == 0) {
+                this.resizeMap.delete(animationRef.scrollingElement)
+                this.resizeObserver.unobserve(animationRef.scrollingElement)
+            }
         }
     }
     refresh(entries) {

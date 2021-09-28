@@ -3,9 +3,10 @@
     <div class="toolbar">
       <button @click="text = text + text">Add text</button>    
       <button @click="enabled = !enabled">Toggle enabled</button>
+      {{ step }}
     </div>
 
-    <scroll-trigger name="test" start="top bottom-=30%" end="bottom top+=30%" :scrub="true" :markers="true">
+    <scroll-trigger name="test" start="top bottom-=30%" end="bottom top+=30%" :scrub="true" :markers="true" :steps="3" @step="s => step = s">
       <p>{{text}}</p>
     </scroll-trigger>
     <scroll-trigger class="fuxk" name="test" start="top bottom-=30%" end="bottom top+=30%" :scrub="true" :markers="true" :enabled="enabled">
@@ -18,6 +19,7 @@
 import { ref } from 'vue'
 
 const enabled = ref(false)
+const step = ref(0)
 const text = ref(`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`)
 
 </script>
