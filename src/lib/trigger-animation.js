@@ -23,21 +23,26 @@ function triggerAnimation(options, currentInstance) {
     function registerAnimation() {
         if (disposed || unref(options.enabled) === false) return
 
-        const id = (unref(options.name) || 'Animation') + '-' + scrollingObserver.animationCounter++
+        const name = unref(options.name) || 'animation'
+        const id = name + '-' + scrollingObserver.animationCounter++
+
         let toggleClass = unref(options.toggleClass)
-        if (toggleClass && toggleClass.targets) {
-            let className = unref(toggleClass.className)
-            let targets = unref(toggleClass.targets)
-            if (Array.isArray(targets)) {
-                targets = targets.map(unref)
-            }
-            toggleClass = {
-                className,
-                targets
+        if (toggleClass) {
+            if (toggleClass.targets) {
+                let className = unref(toggleClass.className)
+                let targets = unref(toggleClass.targets)
+                if (Array.isArray(targets)) {
+                    targets = targets.map(unref)
+                }
+                toggleClass = {
+                    className,
+                    targets
+                }
+            } else if (typeof toggleClass == 'boolean') {
+                toggleClass = `active-${ name }`
             }
         }
 
-        let lastStep = 0
         animationRef = {
             id,
             animation: gsap.timeline({
@@ -84,21 +89,21 @@ function triggerAnimation(options, currentInstance) {
             }
         }
         if (unref(options.scrub)) {
-            unref(options.trigger).style.setProperty('--progress', 0)
+            unref(options.trigger).style.setProperty(`--progress-${ name }`, 0)
             animationRef.animation.to(unref(options.trigger), { 
-                '--progress': 1, 
+                [`--progress-${ name }`]: 1, 
                 ease: unref(options.ease) 
             }, 0)
         }
         if (unref(options.steps)) {
             let lastStep = 0
-            unref(options.trigger).style.setProperty('--step', 0)
+            unref(options.trigger).style.setProperty(`--step-${ name }`, 0)
             animationRef.animation.to(unref(options.trigger), { 
-                '--step': unref(options.steps) - 1, 
+                [`--step-${ name }`]: unref(options.steps) - 1, 
                 ease: SteppedEase.config(unref(options.steps) - 1), 
                 onUpdate: () => {
                     if (unref(options.onStep)) {
-                        const step = unref(options.trigger).style.getPropertyValue('--step')
+                        const step = unref(options.trigger).style.getPropertyValue(`--step-${ name }`)
                         if (step != lastStep) {
                             unref(options.onStep)(step)
                             lastStep = step
@@ -131,7 +136,7 @@ function triggerAnimation(options, currentInstance) {
     }
 
     async function initAnimation() {
-        // console.log('Init Animation', options.name)
+        // console.log('Init Animation', options.trigger)
         destroyAnimation()
         await nextTick()
         await registerAnimation()

@@ -27,7 +27,7 @@ export default {
 			default: 'bottom top'
 		},
         endTrigger: {
-            type: [Object],
+            type: [String, Object],
         },
         enabled: {
             type: Boolean,
@@ -75,11 +75,11 @@ export default {
             type: String,
         },
         toggleClass: {
-            type: [String, Object],
-            default: 'active'
+            type: [String, Object, Boolean],
+            default: true
         },
         trigger: {
-            type: Object
+            type: [String, Object]
         },
         ease: {
             type: String,
@@ -97,7 +97,7 @@ export default {
         const component = ref(null)
         const options = toRefs(props)
 
-        options.trigger = props.trigger ? options.trigger : component
+        options.trigger = props.trigger === null ? options.trigger : component
         Object.assign(options, {
             onEnter: e => emit('enter', e), 
             onEnterBack: e => emit('enterBack', e), 
