@@ -39,7 +39,13 @@ function triggerAnimation(options, currentInstance) {
                     targets
                 }
             } else if (typeof toggleClass == 'boolean') {
-                toggleClass = `active-${ name }`
+                toggleClass = {
+                    className: `active-${ name }`,
+                    targets: [unref(options.trigger)]
+                }
+            }
+            if (unref(options.scope)) {
+                toggleClass.targets.push(unref(options.scope))
             }
         }
 
@@ -89,22 +95,24 @@ function triggerAnimation(options, currentInstance) {
                 animationRef.animation.to(unref(target) || unref(options.trigger), vars, position)
             }
         }
+
+        let scope = unref(options.scope) || unref(options.trigger)
         if (unref(options.scrub)) {
-            unref(options.trigger).style.setProperty(`--progress-${ name }`, 0)
-            animationRef.animation.to(unref(options.trigger), { 
+            scope.style.setProperty(`--progress-${ name }`, 0)
+            animationRef.animation.to(scope, { 
                 [`--progress-${ name }`]: 1, 
                 ease: unref(options.ease) 
             }, 0)
         }
         if (unref(options.steps)) {
             let lastStep = 0
-            unref(options.trigger).style.setProperty(`--step-${ name }`, 0)
-            animationRef.animation.to(unref(options.trigger), { 
+            unref(scope).style.setProperty(`--step-${ name }`, 0)
+            animationRef.animation.to(unref(scope), { 
                 [`--step-${ name }`]: unref(options.steps) - 1, 
                 ease: SteppedEase.config(unref(options.steps) - 1), 
                 onUpdate: () => {
                     if (unref(options.onStep)) {
-                        const step = unref(options.trigger).style.getPropertyValue(`--step-${ name }`)
+                        const step = unref(scope).style.getPropertyValue(`--step-${ name }`)
                         if (step != lastStep) {
                             unref(options.onStep)({ step })
                             lastStep = step

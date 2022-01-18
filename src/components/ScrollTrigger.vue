@@ -96,6 +96,9 @@ export default {
             type: Boolean,
             default: false
         },
+        scope: {
+            type: Object
+        }
 	},
     setup(props, { emit }) {
         const component = ref(null)
