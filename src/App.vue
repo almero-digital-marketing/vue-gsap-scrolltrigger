@@ -3,7 +3,6 @@
     <div class="toolbar">
       <button @click="text = text + text">Add text</button>    
       <button @click="enabled = !enabled">Toggle enabled</button>
-      {{ step }}
     </div>
 
     <div class="trigger" ref="trigger">
