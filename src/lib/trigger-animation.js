@@ -66,6 +66,7 @@ function triggerAnimation(options, currentInstance) {
                     toggleActions: unref(options.toggleActions) || 'play none none none',
                     trigger: unref(options.trigger),
                     toggleClass,
+                    once: unref(options.once),
                     onEnter: unref(options.onEnter), 
                     onEnterBack: unref(options.onEnterBack), 
                     onLeave: unref(options.onLeave), 
@@ -105,7 +106,7 @@ function triggerAnimation(options, currentInstance) {
                     if (unref(options.onStep)) {
                         const step = unref(options.trigger).style.getPropertyValue(`--step-${ name }`)
                         if (step != lastStep) {
-                            unref(options.onStep)(step)
+                            unref(options.onStep)({ step })
                             lastStep = step
                         }
                     }

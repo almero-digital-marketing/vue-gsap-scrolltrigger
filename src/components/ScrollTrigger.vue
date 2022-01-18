@@ -1,6 +1,6 @@
 <template>
 	<div class="scroll-trigger" ref="component">
-		<slot></slot>
+		<slot :step="step" :directin="direction" :progress="progress"></slot>
 	</div>
 </template>
 <script>
@@ -92,10 +92,19 @@ export default {
             type: Number,
             default: 0
         },
+        once: {
+            type: Boolean,
+            default: false
+        },
 	},
     setup(props, { emit }) {
         const component = ref(null)
         const options = toRefs(props)
+
+        const step = ref(0)
+        const isActive = ref(false)
+        const progress = ref(0)
+        const direction = ref(0)
 
         options.trigger = props.trigger === null ? options.trigger : component
         Object.assign(options, {
@@ -103,17 +112,31 @@ export default {
             onEnterBack: e => emit('enterBack', e), 
             onLeave: e => emit('leave', e), 
             onLeaveBack: e => emit('leaveBack', e), 
-            onUpdate: e => emit('update', e), 
+            onUpdate: e => {
+                direction.value = e.direction
+                progress.value = e.progress
+                emit('update', e)
+            }, 
             onScrubComplete: e => emit('scrubComplete', e), 
             onSnapComplete: e => emit('snapComplete', e), 
-            onToggle: e => emit('toggle', e), 
-            onStep: e => emit('step', e), 
+            onToggle: e => {
+                isActive.value = e.isAc
+                emit('toggle', e)
+            }, 
+            onStep: e => {
+                step.value = e.step
+                emit('step', e)
+            }, 
         })
 
         triggerAnimation(options)
 
         return {
             component,
+            step,
+            isActive,
+            progress,
+            direction
         }
     }
 }
