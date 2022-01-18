@@ -7,7 +7,7 @@
 
     <div class="trigger" ref="trigger">
       <scroll-trigger v-slot="trigger" class="static" name="static" start="top bottom-=30%" end="bottom top+=30%" :invalidateOnRefresh="false" :scrub="true" :markers="true" :steps="3" :trigger="trigger">
-        <h2>{{ trigger.step }}</h2>
+        <h2>{{ trigger.step }} {{ trigger.isActive }} {{ trigger.progress }}</h2>
         <p>{{text}}</p>
       </scroll-trigger>
       <scroll-trigger class="dynamic" name="dynamic" start="top bottom-=30%" end="bottom top+=30%" :scrub="true" :markers="true" :enabled="enabled">

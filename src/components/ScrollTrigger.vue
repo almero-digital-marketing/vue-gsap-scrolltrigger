@@ -1,6 +1,6 @@
 <template>
 	<div class="scroll-trigger" ref="component">
-		<slot :step="step" :directin="direction" :progress="progress"></slot>
+		<slot :step="step" :directin="direction" :progress="progress" :isActive="isActive"></slot>
 	</div>
 </template>
 <script>
@@ -120,7 +120,7 @@ export default {
             onScrubComplete: e => emit('scrubComplete', e), 
             onSnapComplete: e => emit('snapComplete', e), 
             onToggle: e => {
-                isActive.value = e.isAc
+                isActive.value = e.isActive
                 emit('toggle', e)
             }, 
             onStep: e => {
