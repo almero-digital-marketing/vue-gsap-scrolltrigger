@@ -18,8 +18,8 @@
           :steps="3" 
           :trigger="trigger"
           :scope="wrapper">
-          <h2>{{ trigger.step }} {{ trigger.isActive }} {{ trigger.progress }}</h2>
           <p>{{text}}</p>
+          <h2>{{ trigger.step }} {{ trigger.isActive }} {{ Math.round(100 * trigger.progress) }}%</h2>
         </scroll-trigger>
       </div>
       <scroll-trigger class="dynamic" name="dynamic" start="top bottom-=30%" end="bottom top+=30%" :scrub="true" :markers="true" :enabled="enabled">
