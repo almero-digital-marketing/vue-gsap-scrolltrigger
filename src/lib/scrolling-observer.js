@@ -40,6 +40,7 @@ class ScrollingObserver {
             const animationRefs = ScrollingObserver.instance.resizeMap.get(entry.target)
             if (animationRefs) {
                 for (let animationRef of animationRefs) {
+                    this.animationCounter++
                     animationRef.animation.scrollTrigger.refresh(true)
                 }
             }

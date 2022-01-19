@@ -51,8 +51,8 @@ const wrapper = ref(null)
   left: 60px;
 }
 .content {
-  padding-top: 100vh;
-  padding-bottom: 100vh;
+  padding-top: 1000px;
+  padding-bottom: 1000px;
 }
 .static, .dynamic {
   border: 2px solid black;

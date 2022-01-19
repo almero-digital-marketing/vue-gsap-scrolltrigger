@@ -3,6 +3,9 @@ import ScrollingObserver from './scrolling-observer'
 import { gsap, SteppedEase } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
+ScrollTrigger.config({
+    autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+})
 
 function triggerAnimation(options, currentInstance) {
     const scrollingObserver = new ScrollingObserver()
