@@ -98,6 +98,10 @@ export default {
         },
         scope: {
             type: Object
+        },
+        autoRefreshEvents: {
+            type: String,
+            default: 'visibilitychange,DOMContentLoaded,load'
         }
 	},
     setup(props, { emit }) {
