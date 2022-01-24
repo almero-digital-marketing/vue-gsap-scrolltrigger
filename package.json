@@ -1,6 +1,6 @@
 {
   "name": "vue-gsap-scrolltrigger",
-  "version": "2.0.9",
+  "version": "2.0.11",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
@@ -23,6 +23,7 @@
     "vue": "^3.2.1"
   },
   "devDependencies": {
+    "gsap": "^3.9.0",
     "@vitejs/plugin-vue": "^1.6.0",
     "@vue/compiler-sfc": "^3.0.5",
     "vite": "^2.5.1"

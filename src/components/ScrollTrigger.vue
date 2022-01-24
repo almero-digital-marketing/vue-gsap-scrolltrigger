@@ -115,11 +115,7 @@ export default {
             onEnterBack: e => emit('enterBack', e), 
             onLeave: e => emit('leave', e), 
             onLeaveBack: e => emit('leaveBack', e), 
-            onUpdate: e => {
-                direction.value = e.direction
-                progress.value = e.progress
-                emit('update', e)
-            }, 
+            onUpdate: e => emit('update', e), 
             onScrubComplete: e => emit('scrubComplete', e), 
             onSnapComplete: e => emit('snapComplete', e), 
             onToggle: e => {

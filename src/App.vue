@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="target content">
     <div class="toolbar">
       <button @click="text = text + text">Add text</button>    
       <button @click="enabled = !enabled">Toggle enabled</button>
@@ -22,7 +22,18 @@
           <h2>{{ trigger.step }} {{ trigger.isActive }} {{ Math.round(100 * trigger.progress) }}%</h2>
         </scroll-trigger>
       </div>
-      <scroll-trigger class="dynamic" name="dynamic" start="top bottom-=30%" end="bottom top+=30%" :scrub="true" :markers="true" :enabled="enabled">
+      <scroll-trigger 
+        class="dynamic" 
+        name="dynamic" 
+        start="top bottom-=30%" 
+        end="bottom top+=30%" 
+        :scrub="true" 
+        :markers="true" 
+        :enabled="enabled" 
+        :toggleClass="{
+          targets: '.target',
+          className: 'active-target'
+        }">
         {{ enabled }}
         <p>{{text}}</p>
       </scroll-trigger>
@@ -71,5 +82,8 @@ const wrapper = ref(null)
 }
 .scroll-trigger {
   margin-top: 200px;
+}
+.active-target {
+  background-color: lightgoldenrodyellow;
 }
 </style>
