@@ -99,6 +99,15 @@ export default {
         scope: {
             type: Object
         },
+        to: {
+            type: [Array, Object],
+        },
+        from: {
+            type: [Array, Object],
+        },
+        fromTo: {
+            type: [Array, Object],
+        },
 	},
     setup(props, { emit }) {
         const component = ref(null)

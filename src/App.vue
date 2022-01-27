@@ -4,7 +4,6 @@
       <button @click="text = text + text">Add text</button>    
       <button @click="enabled = !enabled">Toggle enabled</button>
     </div>
-
     <div class="trigger" ref="trigger">
       <div class="wrapper" ref="wrapper">
         <scroll-trigger 
@@ -17,9 +16,21 @@
           :markers="true" 
           :steps="3" 
           :trigger="trigger"
-          :scope="wrapper">
+          :scope="wrapper"
+          :fromTo="[{
+            targets: 'p',
+            fromVars: {
+              xPercent: -100,
+              scale: .1
+            },
+            toVars: {
+              xPercent: 100,
+              scale: 2,
+              rotate: '360deg'
+            }
+          }]">
           <p>{{text}}</p>
-          <h2>{{ trigger.step }} {{ trigger.isActive }} {{ Math.round(100 * trigger.progress) }}%</h2>
+          <h2>{{ trigger }}</h2>
         </scroll-trigger>
       </div>
       <scroll-trigger 
@@ -69,7 +80,7 @@ const wrapper = ref(null)
   border: 2px solid black;
 }
 .static p {
-  transform: translateX(calc(100vw * var(--progress-static)));
+  /* transform: translateX(calc(100vw * var(--progress-static))); */
   opacity: calc(1 - var(--progress-static));
 }
 .dynamic p {

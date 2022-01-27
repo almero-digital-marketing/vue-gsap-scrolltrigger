@@ -107,6 +107,27 @@ function triggerAnimation(options, currentInstance) {
                 ease: unref(options.ease) 
             }, 0)
         }
+        if (unref(options.to)) {
+            const items = Array.isArray(unref(options.to)) ? unref(options.to) : [unref(options.to)]
+            for(let to of items) {
+                const targets = unref(scope).querySelectorAll(to.targets)
+                animationRef.animation.to(targets, unref(to.vars), 0)
+            }
+        }
+        if (unref(options.from)) {
+            const items = Array.isArray(unref(options.from)) ? unref(options.from) : [unref(options.from)]
+            for(let from of items) {
+                const targets = unref(scope).querySelectorAll(from.targets)
+                animationRef.animation.from(targets, unref(from.vars), 0)
+            }
+        }
+        if (unref(options.fromTo)) {
+            const items = Array.isArray(unref(options.fromTo)) ? unref(options.fromTo) : [unref(options.fromTo)]
+            for(let fromTo of items) {
+                const targets = unref(scope).querySelectorAll(fromTo.targets)
+                animationRef.animation.fromTo(targets, unref(fromTo.fromVars), unref(fromTo.toVars), 0)
+            }
+        }
         if (unref(options.steps)) {
             let lastStep = 0
             unref(scope).style.setProperty(`--step-${ name }`, 0)
