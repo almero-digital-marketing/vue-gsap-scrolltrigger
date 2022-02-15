@@ -12,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default {
     name: 'ScrollTrigger',
-    emits: ['enter', 'enterBack', 'leave', 'leaveBack', 'update', 'scrubComplete', 'snapComplete', 'toggle', 'step'],
+    emits: ['enter', 'enterBack', 'leave', 'leaveBack', 'update', 'scrubComplete', 'snapComplete', 'toggle', 'step', 'activate', 'deactivate'],
     props: {
         name: {
             type: String,
@@ -120,10 +120,22 @@ export default {
 
         options.trigger = props.trigger === null ? options.trigger : component
         Object.assign(options, {
-            onEnter: e => emit('enter', e), 
-            onEnterBack: e => emit('enterBack', e), 
-            onLeave: e => emit('leave', e), 
-            onLeaveBack: e => emit('leaveBack', e), 
+            onEnter: e => {
+                emit('enter', e)
+                emit('activate', e)
+            }, 
+            onEnterBack: e => {
+                emit('enterBack', e)
+                emit('activate', e)
+            }, 
+            onLeave: e => {
+                emit('leave', e)
+                emit('deactivate', e)
+            }, 
+            onLeaveBack: e => {
+                emit('leaveBack', e)
+                emit('deactivate', e)
+            }, 
             onUpdate: e => emit('update', e), 
             onScrubComplete: e => emit('scrubComplete', e), 
             onSnapComplete: e => emit('snapComplete', e), 
