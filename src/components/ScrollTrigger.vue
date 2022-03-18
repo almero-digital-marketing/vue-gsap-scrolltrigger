@@ -1,10 +1,16 @@
 <template>
 	<div class="scroll-trigger" ref="component">
-		<slot :step="step" :directin="direction" :progress="progress" :isActive="isActive"></slot>
+		<slot 
+        :step="step" 
+        :directin="direction" 
+        :progress="progress" 
+        :isActive="isActive" 
+        :distribution="distribution">
+        </slot>
 	</div>
 </template>
 <script>
-import { ref, toRefs } from 'vue'
+import { ref, toRefs, computed } from 'vue'
 import triggerAnimation from '../lib/trigger-animation'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -118,6 +124,16 @@ export default {
         const progress = ref(0)
         const direction = ref(0)
 
+        const distribution = computed(() => {
+            if (!props.steps) return
+            let distribution = new Array(props.steps)
+            const distributionStep = 1 / props.steps
+            for (let index = 0; index < props.steps; index++) {
+                distribution[index] = 1 - Math.abs(step.value - index) * distributionStep
+            }
+            return distribution
+        })
+
         options.trigger = props.trigger === null ? options.trigger : component
         Object.assign(options, {
             onEnter: e => {
@@ -156,7 +172,8 @@ export default {
             step,
             isActive,
             progress,
-            direction
+            direction,
+            distribution
         }
     }
 }

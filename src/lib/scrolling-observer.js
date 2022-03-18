@@ -1,4 +1,4 @@
-import deboounce from 'debounce'
+import debounce from 'debounce'
 
 class ScrollingObserver {
     constructor() {
@@ -9,7 +9,7 @@ class ScrollingObserver {
             this.animationCounter = 1
 
             if(typeof window !== 'undefined') {
-                this.resizeObserver = new ResizeObserver(deboounce(this.refresh, 100))
+                this.resizeObserver = new ResizeObserver(debounce(this.refresh, 100))
             }
         }
 
