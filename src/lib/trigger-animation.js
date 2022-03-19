@@ -104,7 +104,8 @@ function triggerAnimation(options, currentInstance) {
             scope.style.setProperty(`--progress-${ name }`, 0)
             animationRef.animation.to(scope, { 
                 [`--progress-${ name }`]: 1, 
-                ease: unref(options.ease) 
+                ease: unref(options.ease),
+                overwrite: 'auto',
             }, 0)
         }
         if (unref(options.to)) {
