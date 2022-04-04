@@ -68,7 +68,7 @@ function triggerAnimation(options, currentInstance) {
                     pinSpacing: unref(options.pinSpacing),
                     pinType: unref(options.pinType) || 'fixed',
                     refreshPriority: unref(options.refreshPriority),
-                    scroller: unref(options.scroller),
+                    scroller: unref(options.scroller) || (window.smoother && '#smooth-wrapper'),
                     scrub: unref(options.scrub) || unref(options.steps > 0),
                     snap: unref(options.snap),
                     start: unref(options.start),
@@ -112,21 +112,21 @@ function triggerAnimation(options, currentInstance) {
             const items = Array.isArray(unref(options.to)) ? unref(options.to) : [unref(options.to)]
             for(let to of items) {
                 const targets = unref(scope).querySelectorAll(to.targets)
-                animationRef.animation.to(targets, unref(to.vars), 0)
+                animationRef.animation.to(targets, { ...unref(to.vars) }, 0)
             }
         }
         if (unref(options.from)) {
             const items = Array.isArray(unref(options.from)) ? unref(options.from) : [unref(options.from)]
             for(let from of items) {
                 const targets = unref(scope).querySelectorAll(from.targets)
-                animationRef.animation.from(targets, unref(from.vars), 0)
+                animationRef.animation.from(targets, { ...unref(from.vars) }, 0)
             }
         }
         if (unref(options.fromTo)) {
             const items = Array.isArray(unref(options.fromTo)) ? unref(options.fromTo) : [unref(options.fromTo)]
             for(let fromTo of items) {
                 const targets = unref(scope).querySelectorAll(fromTo.targets)
-                animationRef.animation.fromTo(targets, unref(fromTo.fromVars), unref(fromTo.toVars), 0)
+                animationRef.animation.fromTo(targets, { ...unref(fromTo.fromVars) }, { ...unref(fromTo.toVars) }, 0)
             }
         }
         if (unref(options.steps)) {
@@ -187,8 +187,11 @@ function triggerAnimation(options, currentInstance) {
                 await initAnimation()
                 for(let option in options) {
                     if (isRef(options[option])) {
-                        watch(options[option], () => {
-                            initAnimation()
+                        watch(options[option], (newValue, oldValue) => {
+                            if (newValue != oldValue &&
+                                JSON.stringify(newValue) != JSON.stringify(oldValue)) {
+                                initAnimation()
+                            }
                         })
                     }
                 }

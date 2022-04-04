@@ -1,55 +1,69 @@
 <template>
-  <div class="target content">
-    <div class="toolbar">
-      <button @click="text = text + text">Add text</button>    
-      <button @click="enabled = !enabled">Toggle enabled</button>
+  <input type="range" min="0" max="200" v-model="a" class="range">
+  <input type="range" min="0" max="200" v-model="b" class="range">
+  <input type="range" min="0" max="200" v-model="c" class="range">
+  <smooth-scroll :smooth="2">
+
+    <div v-if="speed">
+      <div class="box a" :data-speed="a / 100" v-smooth-effect></div>
+      <div class="box b" :data-speed="b / 100" v-smooth-effect></div>
+      <div class="box c" :data-speed="c / 100" v-smooth-effect></div>
     </div>
-    <div class="trigger" ref="trigger">
-      <div class="wrapper" ref="wrapper">
+
+    <div class="target content">
+      <div class="toolbar">
+        <button @click="speed = !speed">Toggle Speed</button>  
+        <button @click="text = text + text">Add text</button>    
+        <button @click="enabled = !enabled">Toggle enabled</button>
+      </div>
+      <div class="trigger" ref="trigger">
+        <div class="wrapper" ref="wrapper">
+          <scroll-trigger 
+            v-slot="trigger" 
+            class="static" 
+            name="static" 
+            start="top bottom-=30%" 
+            end="bottom top+=30%" 
+            :scrub="true" 
+            :markers="true" 
+            :steps="3" 
+            :trigger="trigger"
+            :scope="wrapper"
+            :fromTo="[{
+              targets: 'p',
+              fromVars: {
+                xPercent: -100,
+                scale: .1
+              },
+              toVars: {
+                xPercent: 50,
+                scale: 2,
+                rotate: '90deg'
+              },
+              ease: 'expo'
+            }]">
+            <p>{{text}}</p>
+            <h2>{{ trigger }}</h2>
+          </scroll-trigger>
+        </div>
         <scroll-trigger 
-          v-slot="trigger" 
-          class="static" 
-          name="static" 
+          class="dynamic" 
+          name="dynamic" 
           start="top bottom-=30%" 
           end="bottom top+=30%" 
           :scrub="true" 
           :markers="true" 
-          :steps="3" 
-          :trigger="trigger"
-          :scope="wrapper"
-          :fromTo="[{
-            targets: 'p',
-            fromVars: {
-              xPercent: -100,
-              scale: .1
-            },
-            toVars: {
-              xPercent: 100,
-              scale: 2,
-              rotate: '360deg'
-            }
-          }]">
+          :enabled="enabled" 
+          :toggleClass="{
+            targets: '.target',
+            className: 'active-target'
+          }">
+          {{ enabled }}
           <p>{{text}}</p>
-          <h2>{{ trigger }}</h2>
         </scroll-trigger>
       </div>
-      <scroll-trigger 
-        class="dynamic" 
-        name="dynamic" 
-        start="top bottom-=30%" 
-        end="bottom top+=30%" 
-        :scrub="true" 
-        :markers="true" 
-        :enabled="enabled" 
-        :toggleClass="{
-          targets: '.target',
-          className: 'active-target'
-        }">
-        {{ enabled }}
-        <p>{{text}}</p>
-      </scroll-trigger>
     </div>
-  </div>
+  </smooth-scroll>
 </template>
 <script setup>
 import { ref } from 'vue'
@@ -59,10 +73,41 @@ const text = ref(`Lorem Ipsum is simply dummy text of the printing and typesetti
 const trigger = ref(null)
 const wrapper = ref(null)
 
+const a = ref(50)
+const b = ref(100)
+const c = ref(150)
+const speed = ref(false)
+
 </script>
 <style>
 #app {
   overflow: hidden;
+}
+.range {
+  position: fixed;
+  top: 20px;
+  z-index: 1000;
+}
+.range:nth-child(2) {
+  left: 200px;
+}
+.range:nth-child(3) {
+  left: 400px;
+}
+.box {
+  position: absolute;
+  top: 200px;
+  height: 100px;
+  width: 100px;
+}
+.box.a {
+  background-color: red;
+}
+.box.b {
+  background-color: green;
+}
+.box.c {
+  background-color: blue;
 }
 .trigger {
   border: 1px solid green;
