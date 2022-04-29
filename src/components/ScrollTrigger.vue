@@ -161,7 +161,7 @@ Object.assign(options, {
         emit('toggle', e)
     }, 
     onStep: e => {
-        step.value = e.step
+        e.step = step.value = Number(e.step)
         emit('step', e)
     }, 
 })

@@ -176,6 +176,14 @@ function triggerAnimation(options, currentInstance) {
         await registerAnimation()
     }
 
+    function optionsEquals(name, option1, option2) {
+        if (name == 'to' || name == 'fromTo' || name == 'from') {
+            return JSON.stringify(option1) == JSON.stringify(option2)
+        } else {
+            return option1 == option2
+        }
+    }
+
     if(typeof window !== 'undefined') {
         onBeforeUnmount(() => {
             destroyAnimation()
@@ -188,8 +196,7 @@ function triggerAnimation(options, currentInstance) {
                 for(let option in options) {
                     if (isRef(options[option])) {
                         watch(options[option], (newValue, oldValue) => {
-                            if (newValue != oldValue &&
-                                JSON.stringify(newValue) != JSON.stringify(oldValue)) {
+                            if (!optionsEquals(option, newValue, oldValue)) {
                                 initAnimation()
                             }
                         })
