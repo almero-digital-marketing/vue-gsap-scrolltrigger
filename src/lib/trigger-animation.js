@@ -29,6 +29,8 @@ function triggerAnimation(options, currentInstance) {
         const name = unref(options.name) || 'animation'
         const id = name + '-' + scrollingObserver.animationCounter++
 
+        console.log('Trigger animations:', scrollingObserver.animationCounter++)
+
         let toggleClass = unref(options.toggleClass)
         if (toggleClass) {
             if (toggleClass.targets) {
