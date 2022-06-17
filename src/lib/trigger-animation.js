@@ -29,7 +29,7 @@ function triggerAnimation(options, currentInstance) {
         const name = unref(options.name) || 'animation'
         const id = name + '-' + scrollingObserver.animationCounter++
 
-        console.log('Trigger animations:', scrollingObserver.animationCounter++)
+        console.log('Register animation:', id)
 
         let toggleClass = unref(options.toggleClass)
         if (toggleClass) {
@@ -45,7 +45,7 @@ function triggerAnimation(options, currentInstance) {
                 }
             } else if (typeof toggleClass == 'boolean') {
                 toggleClass = {
-                    className: `active-${ name }`,
+                    className: `active-${name}`,
                     targets: [unref(options.trigger)]
                 }
             }
@@ -78,21 +78,21 @@ function triggerAnimation(options, currentInstance) {
                     trigger: unref(options.trigger),
                     toggleClass,
                     once: unref(options.once),
-                    onEnter: unref(options.onEnter), 
-                    onEnterBack: unref(options.onEnterBack), 
-                    onLeave: unref(options.onLeave), 
-                    onLeaveBack: unref(options.onLeaveBack), 
-                    onUpdate: unref(options.onUpdate), 
-                    onScrubComplete: unref(options.onScrubComplete), 
-                    onSnapComplete: unref(options.onSnapComplete), 
-                    onToggle: unref(options.onToggle), 
+                    onEnter: unref(options.onEnter),
+                    onEnterBack: unref(options.onEnterBack),
+                    onLeave: unref(options.onLeave),
+                    onLeaveBack: unref(options.onLeaveBack),
+                    onUpdate: unref(options.onUpdate),
+                    onScrubComplete: unref(options.onScrubComplete),
+                    onSnapComplete: unref(options.onSnapComplete),
+                    onToggle: unref(options.onToggle),
                 }
             })
         }
         const timeline = unref(options.timeline)
         if (timeline) {
             if (Array.isArray(timeline)) {
-                for(let { target, vars, position } of timeline) {
+                for (let { target, vars, position } of timeline) {
                     animationRef.animation.to(unref(target) || unref(options.trigger), vars, position)
                 }
             } else {
@@ -103,58 +103,58 @@ function triggerAnimation(options, currentInstance) {
 
         let scope = unref(options.scope) || unref(options.trigger)
         if (unref(options.scrub)) {
-            scope.style.setProperty(`--progress-${ name }`, 0)
-            animationRef.animation.to(scope, { 
-                [`--progress-${ name }`]: 1, 
+            scope.style.setProperty(`--progress-${name}`, 0)
+            animationRef.animation.to(scope, {
+                [`--progress-${name}`]: 1,
                 ease: unref(options.ease),
                 overwrite: 'auto',
             }, 0)
         }
         if (unref(options.to)) {
             const items = Array.isArray(unref(options.to)) ? unref(options.to) : [unref(options.to)]
-            for(let to of items) {
+            for (let to of items) {
                 const targets = unref(scope).querySelectorAll(to.targets)
                 animationRef.animation.to(targets, { ...unref(to.vars) }, 0)
             }
         }
         if (unref(options.from)) {
             const items = Array.isArray(unref(options.from)) ? unref(options.from) : [unref(options.from)]
-            for(let from of items) {
+            for (let from of items) {
                 const targets = unref(scope).querySelectorAll(from.targets)
                 animationRef.animation.from(targets, { ...unref(from.vars) }, 0)
             }
         }
         if (unref(options.fromTo)) {
             const items = Array.isArray(unref(options.fromTo)) ? unref(options.fromTo) : [unref(options.fromTo)]
-            for(let fromTo of items) {
+            for (let fromTo of items) {
                 const targets = unref(scope).querySelectorAll(fromTo.targets)
                 animationRef.animation.fromTo(targets, { ...unref(fromTo.fromVars) }, { ...unref(fromTo.toVars) }, 0)
             }
         }
         if (unref(options.steps)) {
             let lastStep = 0
-            unref(scope).style.setProperty(`--step-${ name }`, 0)
-            animationRef.animation.to(unref(scope), { 
-                [`--step-${ name }`]: unref(options.steps) - 1, 
-                ease: SteppedEase.config(unref(options.steps) - 1), 
+            unref(scope).style.setProperty(`--step-${name}`, 0)
+            animationRef.animation.to(unref(scope), {
+                [`--step-${name}`]: unref(options.steps) - 1,
+                ease: SteppedEase.config(unref(options.steps) - 1),
                 onUpdate: () => {
                     if (unref(options.onStep)) {
-                        const step = unref(scope).style.getPropertyValue(`--step-${ name }`)
+                        const step = unref(scope).style.getPropertyValue(`--step-${name}`)
                         if (step != lastStep) {
                             unref(options.onStep)({ step })
                             lastStep = step
                         }
                     }
-                }, 
+                },
             }, 0)
         }
-        
+
         if (animationRef.animation.scrollTrigger.scroller != window) {
             animationRef.scrollingElement = animationRef.animation.scrollTrigger.scroller
         } else {
             animationRef.scrollingElement = window.document.scrollingElement
         }
-        
+
         scrollingObserver.observe(animationRef)
 
         if (unref(options.onAnimation)) unref(options.onAnimation)(animationRef)
@@ -178,27 +178,62 @@ function triggerAnimation(options, currentInstance) {
         await registerAnimation()
     }
 
-    function optionsEquals(name, option1, option2) {
-        if (name == 'to' || name == 'fromTo' || name == 'from') {
-            return JSON.stringify(option1) == JSON.stringify(option2)
-        } else {
-            return option1 == option2
+    // Reference: https://levelup.gitconnected.com/how-to-get-a-perfect-deep-equal-in-javascript-b849fe30e54f
+    const deepEqual = (objA, objB, map = new WeakMap()) => {
+        if (Object.is(objA, objB)) return true
+
+        if (objA instanceof Date && objB instanceof Date) {
+            return objA.getTime() === objB.getTime()
         }
+        if (objA instanceof RegExp && objB instanceof RegExp) {
+            return objA.toString() === objB.toString()
+        }
+
+        if (
+            typeof objA !== 'object' ||
+            objA === null ||
+            typeof objB !== 'object' ||
+            objB === null
+        ) {
+            return false
+        }
+
+        if (map.get(objA) === objB) return true
+        map.set(objA, objB);
+
+        const keysA = Reflect.ownKeys(objA)
+        const keysB = Reflect.ownKeys(objB)
+
+        if (keysA.length !== keysB.length) {
+            return false;
+        }
+
+        for (let i = 0; i < keysA.length; i++) {
+            if (
+                !Reflect.has(objB, keysA[i]) ||
+                !deepEqual(objA[keysA[i]], objB[keysA[i]], map)
+            ) {
+                return false
+            }
+        }
+
+        return true
     }
 
-    if(typeof window !== 'undefined') {
+    if (typeof window !== 'undefined') {
         onBeforeUnmount(() => {
             destroyAnimation()
             disposed = true
         }, currentInstance)
 
-        if(!currentInstance) {
+        if (!currentInstance) {
             onMounted(async () => {
                 await initAnimation()
-                for(let option in options) {
+                for (let option in options) {
                     if (isRef(options[option])) {
                         watch(options[option], (newValue, oldValue) => {
-                            if (!optionsEquals(option, newValue, oldValue)) {
+                            if (!deepEqual(option, newValue, oldValue)) {
+                                console.log('Animation property change:', option, options.name.value)
                                 initAnimation()
                             }
                         })
