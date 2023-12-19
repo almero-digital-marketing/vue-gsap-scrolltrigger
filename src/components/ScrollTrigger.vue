@@ -166,5 +166,5 @@ Object.assign(options, {
     }, 
 })
 
-triggerAnimation(options)
+defineExpose(triggerAnimation(options))
 </script>

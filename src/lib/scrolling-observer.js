@@ -42,7 +42,7 @@ class ScrollingObserver {
                 for (let animationRef of animationRefs) {
                     console.log('Animation resize:', animationRef.id)
                     this.animationCounter++
-                    animationRef.animation.scrollTrigger.refresh(true)
+                    animationRef.animation.scrollTrigger?.refresh(true)
                 }
             }
         }

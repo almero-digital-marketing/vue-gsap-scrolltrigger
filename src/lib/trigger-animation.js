@@ -149,8 +149,8 @@ function triggerAnimation(options, currentInstance) {
             }, 0)
         }
 
-        if (animationRef.animation.scrollTrigger.scroller != window) {
-            animationRef.scrollingElement = animationRef.animation.scrollTrigger.scroller
+        if (animationRef.animation.scrollTrigger?.scroller != window) {
+            animationRef.scrollingElement = animationRef.animation.scrollTrigger?.scroller
         } else {
             animationRef.scrollingElement = window.document.scrollingElement
         }
@@ -163,7 +163,7 @@ function triggerAnimation(options, currentInstance) {
     function destroyAnimation() {
         if (animationRef) {
             scrollingObserver.unobserve(animationRef)
-            animationRef.animation.scrollTrigger.kill()
+            animationRef.animation.scrollTrigger?.kill()
             animationRef.animation.kill()
             animationRef.animation = null
             removeMarkers()
@@ -232,7 +232,7 @@ function triggerAnimation(options, currentInstance) {
                 for (let option in options) {
                     if (isRef(options[option])) {
                         watch(options[option], (newValue, oldValue) => {
-                            if (!deepEqual(option, newValue, oldValue)) {
+                            if (!deepEqual(newValue, oldValue)) {
                                 console.log('Animation property change:', option, options.name.value)
                                 initAnimation()
                             }
